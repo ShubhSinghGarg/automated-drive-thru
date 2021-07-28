@@ -3,6 +3,10 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 
+from nltk.corpus import stopwords
+# nltk.download('stopwords')
+from nltk.tokenize import word_tokenize
+
 # data which we are going to display as tables
 DATA = [[ "Item Number" , "Name", "Quantity", "Price" ]]
 
@@ -56,8 +60,8 @@ def detect_meals():
     global ORDER, DATA
     
 
-    price = 0;
-    word_used = "";
+    price = 0
+    word_used = ""
 
     if (ORDER.count('number') > 0):
         i = ORDER.index('number')
@@ -88,14 +92,14 @@ def detect_meals():
 
     price = price * int(quantity)
 
-    DATA.append([ITEM_NUM , ('meal' + meal_number), quantity, "$ " + str(price)])
+    DATA.append([ITEM_NUM , ('Meal' + meal_number), quantity, "$ " + str(round(price, 2))])
 
     ORDER.remove(word_used)
     return price
 
 def detect_fries():
 
-    price = 0;
+    price = 0
 
     global ORDER, DATA
 
@@ -117,18 +121,18 @@ def detect_fries():
         price = 2
 
     global ITEM_NUM
-    ITEM_NUM += 1;
+    ITEM_NUM += 1
 
     price = price * int(quantity)
 
-    DATA.append([ITEM_NUM , (" fries - " + fry_size), quantity, "$ " + str(price)])
+    DATA.append([ITEM_NUM , (" Fries - " + fry_size.title()), quantity, "$" + str(round(price, 2))])
 
     ORDER.remove('fries')
     return price
 
 def detect_icecream():
  
-    price = 0;
+    price = 0
 
     global ORDER, DATA
 
@@ -151,11 +155,11 @@ def detect_icecream():
         price = 3
 
     global ITEM_NUM
-    ITEM_NUM += 1;
+    ITEM_NUM += 1
 
     price = price * int(quantity)
 
-    DATA.append([ITEM_NUM , (cream_type + ' ice cream - ' + cream_size), quantity, "$ " + str(price)])
+    DATA.append([ITEM_NUM , (cream_type.title() + ' Ice Cream - ' + cream_size.title()), quantity, "$" + str(round(price, 2))])
 
     ORDER.remove('ice')
     return price
@@ -204,8 +208,9 @@ def call_func(order):
         new_price +=  detect_fries()
         new_price += detect_icecream()
 
-    DATA.append([ "Sub Total", "", "", str(new_price)])
-    DATA.append([ "Tax", "", "", str((new_price*0.085))])
-    DATA.append([ "Total", "", "", str(new_price*1.085)])
+    DATA.append([ "", "", "", ""])
+    DATA.append([ "Subtotal", "", "", "$" + str(round(new_price, 2))])
+    DATA.append([ "Tax", "", "", "$" + str(round(new_price*0.085, 2))])
+    DATA.append([ "Total", "", "", "$" + str(round(new_price*1.085, 2))])
 
     pdf_builder()
