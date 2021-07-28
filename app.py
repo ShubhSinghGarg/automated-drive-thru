@@ -1,4 +1,6 @@
 
+import backend
+from backend import call_func
 import speech_recognition as sr
 import pyttsx3
 import nltk 
@@ -72,7 +74,17 @@ def speak_text(command):
 def better_order(order):
 
     order = order.lower()
-    order_list = order.split("and")
+
+    word_to_num = {
+        "one": '1',
+        "two": '2',
+        "three": '3'
+    }
+    
+    for key in word_to_num.keys():
+        order = order.replace(key, word_to_num[key])
+
+    order_list = order.split(' ')
     size = len(order_list)
     
     for i in range(size):
@@ -80,12 +92,11 @@ def better_order(order):
 
         tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
         order_list[i] = ' '.join(tokens_without_sw)
+    
+    while (order_list.count(' ') > 0):
+        order_list.remove(' ')
     return order_list
 
-
-car_count = video_car_detection()
-print(car_count)
-exit()
 while(1):
 
     try:
@@ -101,6 +112,7 @@ while(1):
             r.adjust_for_ambient_noise(source, duration=0.2)
 
             print("now starting")
+            speak_text("Welcome to ")
 
             audio_data = r.record(source, duration=10)
             print("Recognizing...")
@@ -115,6 +127,8 @@ while(1):
                 print("\n" + i)
             speak_text(MyText)
 
+            call_func(order_list)
+            exit(1)
     except sr.RequestError as e:
         print("Could not request results; {0}".format(e))
 
