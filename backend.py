@@ -160,6 +160,34 @@ def detect_icecream():
     ORDER.remove('ice')
     return price
 
+# function to clear up the order as best as possible
+def better_order(order):
+
+    order = order.lower()
+
+    word_to_num = {
+        "one": '1',
+        "two": '2',
+        "three": '3'
+    }
+    
+    for key in word_to_num.keys():
+        order = order.replace(key, word_to_num[key])
+
+    order_list = order.split(' ')
+    size = len(order_list)
+    
+    for i in range(size):
+        text_tokens = word_tokenize(order_list[i])
+
+        tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
+        order_list[i] = ' '.join(tokens_without_sw)
+    
+    while (order_list.count(' ') > 0):
+        order_list.remove(' ')
+    return order_list
+
+
 def call_func(order):
 
     global ORDER, DATA
